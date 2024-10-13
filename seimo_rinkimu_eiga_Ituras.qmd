@@ -1,5 +1,5 @@
 ---
-title: "Rinkimų eigos analizė"
+title: "2024 metų Seimo rinkimų eigos analizė"
 format: 
     html:
         embed-resources: true
