@@ -71,6 +71,43 @@ ggplot(aes(x = timestamp, y = proc_nuo_dal_rinkeju, group = santrumpa, colour = 
     labs(x = "Laikas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Balsavimo rezultatų kitimas laike")
 ```
 
+### 7 partijos x ašis kita
+
+```{r}
+top7 <- c(3, 12,13,8,11,14,16)
+cols <- RColorBrewer::brewer.pal(7, "Set1")
+
+dt2 <- dt1 %>% filter(saraso_numeris %in% top7)
+
+mt <- dt2 %>% select(saraso_numeris, santrumpa, spalva) %>% unique %>% arrange(saraso_numeris)
+
+dt3 <- dt2 %>% mutate(santrumpa = factor(santrumpa, levels = mt$santrumpa))
+
+ggplot(aes(x = lt_proc_rinkeju, y = proc_nuo_dal_rinkeju, group = santrumpa, colour = santrumpa), data = dt3) +
+    geom_point() +
+    geom_line() +
+    theme_bw() +
+    scale_colour_manual(name = "Partija", values = mt$spalva) +
+    labs(x = "Suskaičiuotų balsų procentas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Balsavimo rezultatų kitimas laike")
+```
+
+
+
+### 7 partijos mažiau 10 procentų
+
+```{r}
+
+dt4 <- dt3 %>% filter(proc_nuo_dal_rinkeju<10 & proc_nuo_dal_rinkeju>5)
+mt4 <- mt %>% filter(spalva %in% unique(dt4$spalva))
+
+ggplot(aes(x = timestamp, y = proc_nuo_dal_rinkeju, group = santrumpa, colour = santrumpa), data = dt4) +
+    geom_point() +
+    geom_line() +
+    theme_bw() +
+    scale_colour_manual(name = "Partija", values = mt4$spalva) +
+    labs(x = "Laikas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Balsavimo rezultatų kitimas laike")
+```
+
 
 ### Žemiau 5 procentų
 
