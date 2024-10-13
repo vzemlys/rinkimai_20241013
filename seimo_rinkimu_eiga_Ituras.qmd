@@ -29,7 +29,7 @@ dt <- read.csv("data/20241013/daugmvrt.csv") %>%
     mutate(timestamp = ymd_hms(timestamp)) %>% filter(timestamp>= ymd_hms("2024-10-13 21:00:00"))
 
 ap <- dt %>%
-    select(timestamp, apylinkes) %>%
+    select(timestamp, apylinkes, lt_proc_rinkeju) %>%
     unique()
 
 san <- readxl::read_xlsx("data/santrumpos.xlsx")
@@ -41,11 +41,19 @@ ggplot(aes(x = timestamp, y = apylinkes), data = ap) +
     theme_bw() +
     labs(x = "Laikas", y = "Apylinkės", title = "Apylinkių pristačiusių duomenis skaičius")
 ```
+```{r}
+ggplot(aes(x = timestamp, y = lt_proc_rinkeju), data = ap) +
+    geom_col() +
+    theme_bw() +
+    labs(x = "Laikas", y = "Apylinkės", title = "Suskaičiuotų balsų procentas")
+```
+
 
 ## Balsavimo rezultatai
 
-```{r}
+### 7 partijos
 
+```{r}
 top7 <- c(3, 12,13,8,11,14,16)
 cols <- RColorBrewer::brewer.pal(7, "Set1")
 
@@ -60,5 +68,24 @@ ggplot(aes(x = timestamp, y = proc_nuo_dal_rinkeju, group = santrumpa, colour = 
     geom_line() +
     theme_bw() +
     scale_colour_manual(name = "Partija", values = mt$spalva) +
+    labs(x = "Laikas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Balsavimo rezultatų kitimas laike")
+```
+
+
+### Žemiau 5 procentų
+
+```{r}
+
+
+dtg <- dt1 %>% filter(proc_nuo_dal_rinkeju<5)
+mtg <- dtg %>% select(saraso_numeris, santrumpa, spalva) %>% unique %>% arrange(saraso_numeris)
+
+dtg1 <- dtg %>% mutate(santrumpa = factor(santrumpa, levels = mtg$santrumpa))
+
+ggplot(aes(x = timestamp, y = proc_nuo_dal_rinkeju, group = santrumpa, colour = santrumpa), data = dtg1) +
+    geom_point() +
+    geom_line() +
+    theme_bw() +
+    scale_colour_manual(name = "Partija", values = mtg$spalva) +
     labs(x = "Laikas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Balsavimo rezultatų kitimas laike")
 ```
