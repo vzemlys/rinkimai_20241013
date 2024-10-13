@@ -108,33 +108,43 @@ ggplot(aes(x = lt_proc_rinkeju, y = proc_nuo_dal_rinkeju, group = santrumpa, col
     labs(x = "Laikas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Procentas nuo dalyvavusių rinkėjų")
 ```
 
-### Ar LŽVS nukris žemiau 7?
+### Tiesinių prognozių kitimas
+
+Su kiekvienu duomenų atnaujinimu padaroma prognozė pagal turimus trendus, koks bus galutinis rezultatas.
 
 ```{r}
-fc7 <- dt4 %>% filter(saraso_numeris == 8)
+do_one_forecast <- function(dt, sno) {
+    vv <- dt %>% filter(saraso_numeris == sno) %>% arrange(timestamp)
+    rr <- 6:nrow(vv)
+    fc <- sapply(rr, function(x) {
+        mod <- lm(proc_nuo_dal_rinkeju~lt_proc_rinkeju, data = vv[1:x,])
+        res <- predict(mod, newdata = data.frame(lt_proc_rinkeju = 100))
+        as.numeric(res)
+    })
+    data.frame(saraso_numeris =sno, 
+               lt_proc_rinkeju = vv$lt_proc_rinkeju[rr], 
+               timestamp = vv$timestamp[rr], forecast = fc) 
+    
+}
 
-mod <- lm(proc_nuo_dal_rinkeju~lt_proc_rinkeju, data =fc7)
+fc <- lapply(unique(as.integer(dt1$saraso_numeris)), function(x)do_one_forecast(dt1,x)) %>% bind_rows
 
-summary(mod)
+fc1 <- fc %>% left_join(dt1 %>% select(saraso_numeris, santrumpa, spalva) %>% unique)
 
-predict(mod, newdata = data.frame(lt_proc_rinkeju = 100))
+fc2 <- fc1 %>% filter(saraso_numeris %in% top7)
+
+mt <-  fc2 %>% select(saraso_numeris, santrumpa, spalva) %>% unique %>% arrange(saraso_numeris)
+
+fc3 <- fc2 %>% mutate(santrumpa = factor(santrumpa, levels = mt$santrumpa))
+
+ggplot(aes(x = lt_proc_rinkeju, y = forecast, group = santrumpa, colour = santrumpa), data = fc3) +
+    geom_point() +
+    geom_line() +
+    theme_bw() +
+    scale_colour_manual(name = "Partija", values = mt$spalva) +
+    labs(x = "Suskaičiuotų balsų procentas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Galutinio rinkimų rezultatų prognozė")
 
 ```
-
-### Ar LP pakils aukščiau 5%?
-
-```{r}
-fc7 <- dt1 %>% filter(saraso_numeris == 16)
-
-mod <- lm(proc_nuo_dal_rinkeju~lt_proc_rinkeju, data =fc7)
-
-summary(mod)
-
-predict(mod, newdata = data.frame(lt_proc_rinkeju = 100))
-
-```
-
-
 
 ### Žemiau 5 procentų
 
