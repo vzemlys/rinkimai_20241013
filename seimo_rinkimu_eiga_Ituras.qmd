@@ -32,6 +32,10 @@ ap <- dt %>%
     select(timestamp, apylinkes) %>%
     unique()
 
+san <- readxl::read_xlsx("data/santrumpos.xlsx")
+
+dt1 <- dt %>% left_join(san)
+
 ggplot(aes(x = timestamp, y = apylinkes), data = ap) +
     geom_col() +
     theme_bw() +
@@ -41,12 +45,20 @@ ggplot(aes(x = timestamp, y = apylinkes), data = ap) +
 ## Balsavimo rezultatai
 
 ```{r}
-cols <- RColorBrewer::brewer.pal(8, "Set1")[c(6, 8, 7, 5, 2, 1, 3, 4)]
-ggplot(aes(x = timestamp, y = proc_viso, group = kandidatas, colour = kandidatas), data = dt) +
+
+top7 <- c(3, 12,13,8,11,14,16)
+cols <- RColorBrewer::brewer.pal(7, "Set1")
+
+dt2 <- dt1 %>% filter(saraso_numeris %in% top7)
+
+mt <- dt2 %>% select(saraso_numeris, santrumpa, spalva) %>% unique %>% arrange(saraso_numeris)
+
+dt3 <- dt2 %>% mutate(santrumpa = factor(santrumpa, levels = mt$santrumpa))
+
+ggplot(aes(x = timestamp, y = proc_nuo_dal_rinkeju, group = santrumpa, colour = santrumpa), data = dt3) +
     geom_point() +
     geom_line() +
     theme_bw() +
-    scale_colour_manual(name = "Kandidatas", values = cols) +
+    scale_colour_manual(name = "Partija", values = mt$spalva) +
     labs(x = "Laikas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Balsavimo rezultatų kitimas laike")
 ```
-
