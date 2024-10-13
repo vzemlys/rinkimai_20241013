@@ -1,0 +1,52 @@
+---
+title: "Rinkimų eigos analizė"
+format: 
+    html:
+        embed-resources: true
+        code-fold: true
+        df-print: paged
+        toc: true
+        toc-location: left
+        theme: cosmo
+knitr: 
+  opts_chunk: 
+    echo: false
+    message: false
+    warning: false
+
+---
+
+## Apylinkių skaičius
+
+Iš viso yra 1947 apylinkės
+
+```{r}
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+
+dt <- read.csv("data/20241013/daugmvrt.csv") %>% 
+    mutate(timestamp = ymd_hms(timestamp)) %>% filter(timestamp>= ymd_hms("2024-10-13 21:00:00"))
+
+ap <- dt %>%
+    select(timestamp, apylinkes) %>%
+    unique()
+
+ggplot(aes(x = timestamp, y = apylinkes), data = ap) +
+    geom_col() +
+    theme_bw() +
+    labs(x = "Laikas", y = "Apylinkės", title = "Apylinkių pristačiusių duomenis skaičius")
+```
+
+## Balsavimo rezultatai
+
+```{r}
+cols <- RColorBrewer::brewer.pal(8, "Set1")[c(6, 8, 7, 5, 2, 1, 3, 4)]
+ggplot(aes(x = timestamp, y = proc_viso, group = kandidatas, colour = kandidatas), data = dt) +
+    geom_point() +
+    geom_line() +
+    theme_bw() +
+    scale_colour_manual(name = "Kandidatas", values = cols) +
+    labs(x = "Laikas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Balsavimo rezultatų kitimas laike")
+```
+
