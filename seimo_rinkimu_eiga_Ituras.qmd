@@ -100,13 +100,40 @@ ggplot(aes(x = lt_proc_rinkeju, y = proc_nuo_dal_rinkeju, group = santrumpa, col
 dt4 <- dt3 %>% filter(proc_nuo_dal_rinkeju<10 & proc_nuo_dal_rinkeju>5)
 mt4 <- mt %>% filter(spalva %in% unique(dt4$spalva))
 
-ggplot(aes(x = timestamp, y = proc_nuo_dal_rinkeju, group = santrumpa, colour = santrumpa), data = dt4) +
+ggplot(aes(x = lt_proc_rinkeju, y = proc_nuo_dal_rinkeju, group = santrumpa, colour = santrumpa), data = dt4) +
     geom_point() +
     geom_line() +
     theme_bw() +
     scale_colour_manual(name = "Partija", values = mt4$spalva) +
-    labs(x = "Laikas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Balsavimo rezultatų kitimas laike")
+    labs(x = "Laikas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Procentas nuo dalyvavusių rinkėjų")
 ```
+
+### Ar LŽVS nukris žemiau 7?
+
+```{r}
+fc7 <- dt4 %>% filter(saraso_numeris == 8)
+
+mod <- lm(proc_nuo_dal_rinkeju~lt_proc_rinkeju, data =fc7)
+
+summary(mod)
+
+predict(mod, newdata = data.frame(lt_proc_rinkeju = 100))
+
+```
+
+### Ar LP pakils aukščiau 5%?
+
+```{r}
+fc7 <- dt1 %>% filter(saraso_numeris == 16)
+
+mod <- lm(proc_nuo_dal_rinkeju~lt_proc_rinkeju, data =fc7)
+
+summary(mod)
+
+predict(mod, newdata = data.frame(lt_proc_rinkeju = 100))
+
+```
+
 
 
 ### Žemiau 5 procentų
