@@ -146,6 +146,16 @@ ggplot(aes(x = lt_proc_rinkeju, y = forecast, group = santrumpa, colour = santru
 
 ```
 
+```{r}
+library(knitr)
+ll <- fc1 %>% filter(timestamp == max(timestamp))
+
+ll1 <- ll %>% arrange(forecast) %>% select(santrumpa, prognoze = forecast) %>% 
+    mutate(prognoze = round(prognoze, 1)) %>% arrange(-prognoze)
+
+kable(ll1)
+```
+
 ### Žemiau 5 procentų
 
 ```{r}
