@@ -142,7 +142,7 @@ ggplot(aes(x = lt_proc_rinkeju, y = forecast, group = santrumpa, colour = santru
     geom_line() +
     theme_bw() +
     scale_colour_manual(name = "Partija", values = mt$spalva) +
-    labs(x = "Suskaičiuotų balsų procentas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Galutinio rinkimų rezultatų prognozė")
+    labs(x = "Suskaičiuotų balsų procentas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Momentinė galutinio rinkimų rezultatų prognozė")
 
 ```
 
