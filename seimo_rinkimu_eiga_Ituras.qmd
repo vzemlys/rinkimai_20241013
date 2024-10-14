@@ -166,24 +166,24 @@ mtg <- dtg %>% select(saraso_numeris, santrumpa, spalva) %>% unique %>% arrange(
 
 dtg1 <- dtg %>% mutate(santrumpa = factor(santrumpa, levels = mtg$santrumpa))
 
-ggplot(aes(x = timestamp, y = proc_nuo_dal_rinkeju, group = santrumpa, colour = santrumpa), data = dtg1) +
+ggplot(aes(x = lt_proc_rinkeju, y = proc_nuo_dal_rinkeju, group = santrumpa, colour = santrumpa), data = dtg1) +
     geom_point() +
     geom_line() +
     theme_bw() +
     scale_colour_manual(name = "Partija", values = mtg$spalva) +
-    labs(x = "Laikas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Balsavimo rezultatų kitimas laike")
+    labs(x = "Suskaičiuotų balsų procentas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Balsavimo rezultatų kitimas laike")
 ```
 
 ### Įdomesni trendai
 
 ```{r}
 
-ggplot(aes(x = timestamp, y = proc_nuo_dal_rinkeju, group = santrumpa, colour = santrumpa), data = dtg1 %>% filter(saraso_numeris %in% c(16,5, 2))) +
+ggplot(aes(x = lt_proc_rinkeju , y = proc_nuo_dal_rinkeju, group = santrumpa, colour = santrumpa), data = dtg1 %>% filter(saraso_numeris %in% c(16,5, 2))) +
     geom_point() +
     geom_line() +
     theme_bw() +
     scale_colour_manual(name = "Partija", values = mtg %>% filter(saraso_numeris %in% c(16,5, 2)) %>% .$spalva) +
-    labs(x = "Laikas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Balsavimo rezultatų kitimas laike")
+    labs(x = "Suskaičiuotų balsų procentas", y = "Procentas nuo dalyvavusių rinkėjų", title = "Balsavimo rezultatų kitimas laike")
 ```
 
 ### Kaimynų projektų sėkmė
